@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /*隐藏到显示前*/
+        .lee-enter {
+            left: -500px !important;
+            opacity: 0;
+        }
+
+        /*隐藏到显示时*/
+        .lee-enter-active {
+            transition: all 1s;
+        }
+
+        /*显示到隐藏时*/
+        .lee-leave-active {
+            transition: all 1s;
+        }
+
+        .lee-leave-to {
+            opacity: 0;
+            left: 500px !important;
+        }
+
+
+        /*隐藏到显示前*/
+        .lee2-enter {
+            left: -500px !important;
+            opacity: 0;
+        }
+
+        /*隐藏到显示时*/
+        .lee2-enter-active {
+            transition: all 1s;
+        }
+
+        /*显示到隐藏时*/
+        .lee2-leave-active {
+            transition: all 1s;
+        }
+
+        .lee2-leave-to {
+            opacity: 0;
+            left: 500px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <lee></lee>
+    </div>
+    <template id="lee">
+        <div>
+            <div style="width: 500px;height: 300px;border: 1px solid gray; margin: auto;position: relative;">
+                <span class="left" @click="btnL()" style="position: absolute;top: 30%;left: 0;z-index: 999;">prve</span>
+                <span class="right" @click="btnR()" style="position: absolute;top: 30%;right: 0;z-index: 999;">next</span>
+                <transition :name='t_type' v-for="(i,$index) in arr">
+                    <div style="width: 500px;height: 300px;position: absolute;top: 0;left: 0;background: green;"
+                        v-show="type==$index">
+                        <p>{{i}}</p>
+                    </div>
+                </transition>
+            </div>
+        </div>
+    </template>
+</body>
+<script src="vue.js"></script>
+<script>
+    Vue.component('lee', {
+        template: '#lee',
+        methods: {
+            btnL() {
+                this.t_type = 'lee'
+                this.type++
+                if (this.type >= 5) {
+                    this.type = 0
+                }
+            },
+            btnR() {
+                this.t_type = 'lee2'
+                this.type--
+                if (this.type <= -1) {
+                    this.type = 4
+                }
+            }
+        },
+        data() {
+            return {
+                type: 0,
+                t_type: 'lee',
+                arr: ['我是第一个', '我是第二个', '我是第三个', '我是第四个', '我是第五个']
+            }
+        }
+    })
+    new Vue({
+        el: '#box'
+    })
+</script>
+
+</html>
