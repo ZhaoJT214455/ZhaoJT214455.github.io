@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://www.jq22.com/jquery/jquery-3.3.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+    </script>
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #con {
+            height: 500px;
+            overflow-y: scroll;
+        }
+
+        #songlist {
+            height: 650px;
+            overflow-y: scroll;
+        }
+
+        #con::-webkit-scrollbar {
+            display: none;
+        }
+
+        #songlist::-webkit-scrollbar {
+            display: none;
+        }
+
+        #singer {
+            height: 650px;
+            overflow-y: scroll;
+        }
+
+        #singer::-webkit-scrollbar {
+            display: none;
+        }
+
+        #top {
+            height: 650px;
+            overflow-y: scroll;
+        }
+
+        #top::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <div style="width: 500px;border: 1px solid gray;margin: 100px auto;overflow: hidden;">
+            <div style="border-bottom: 1px solid gray;height: 50px;padding: 10px 20px;">
+                <span v-for='i in arr' style="line-height: 30px;padding: 0 15px;"><a
+                        :href="i.path">{{i.text}}</a></span>
+            </div>
+            <div style="height: 650px;overflow: hidden;">
+                <keep-alive>
+                    <router-view></router-view>
+                </keep-alive>
+            </div>
+            <div style="border-top: 1px solid gray;padding: 15px 20px;">
+                <audio :src="url" autoplay controls style="margin: auto;display: block;"></audio>
+            </div>
+        </div>
+
+    </div>
+    <template id="no1">
+        <div style="padding: 10px;">
+            <div>
+                <input type="search" v-model="value" @keyup.enter="search"
+                    style="text-indent: 20px; width: 100%;height: 50px;margin-bottom: 15px;">
+            </div>
+            <div style="height: 80px;overflow: hidden;margin-bottom: 20px;">
+                <span v-for='i in arr'
+                    style="border: 1px solid gray;padding: 6px 10px;margin: 3px;float: left;border-radius: 3px;">
+                    <a href="">{{i.k}}</a>
+                </span>
+            </div>
+            <div id="con" style="padding: 15px 20px;">
+                <p style="line-height:40px;" v-for="i in songlist"><a style="color: black;"
+                        :href="`#/no5/${i.songmid}/${i.songname}`">{{i.songname}}</a></p>
+
+            </div>
+        </div>
+    </template>
+    <template id="no2">
+        <div id="songlist" style="padding: 20px 5px;">
+            <div v-for='i in arr' style="float: left;margin: 10px;border: 1px solid gray;">
+                <div>
+                    <a :href="'#/top/'+i.id"><img style="width: 100px;" :src="i.picUrl" alt=""></a>
+                </div>
+                <p v-for='i in i.songList'
+                    style="overflow: hidden;width: 100px;height: 15px;line-height: 15px;text-indent: 10px;">
+                    {{i.songname}}</p>
+            </div>
+        </div>
+    </template>
+    <template id="no3">
+        <div>
+            <div id="singer" style="padding: 20px;">
+                <p v-for='i in arr' style="line-height: 30px;"><a :href="'#/singers/'+i.Fsinger_mid">{{i.Fsinger_name}}</a></p>
+            </div>
+        </div>
+    </template>
+    <template id="no4">
+        <div>
+            no4
+        </div>
+    </template>
+    <template id="no5">
+        <div>
+            <div id="con" style="padding: 15px 20px;">
+                <p style="line-height:40px;" v-for="i in arr"><a style="color: black;"
+                        :href="`#/no5/${i.songmid}/${i.songname}`">{{i.songname}}</a></p>
+            </div>
+    </template>
+    <template id="top">
+        <div>
+            <div id="top" style="padding: 20px;">
+                <p v-for='i in list' style="line-height: 30px;"><a
+                        :href="`#/no5/${i.data.songmid}/${i.data.songname}`">{{i.data.songname}}</a></p>
+            </div>
+        </div>
+    </template>
+    <template id="singers">
+        <div>
+           <div id="singer" style="padding: 20px;">
+                <p v-for='i in arr' style="line-height: 30px;"><a :href="`#/no5/${i.musicData.songmid}/${i.musicData.songname}`">{{i.musicData.songname}}</a></p>
+            </div>
+        </div>
+    </template>
+</body>
+<script src="vue.js"></script>
+<script src="vue-router.js"></script>
+<script src="vue-resource.js"></script>
+<script>
+    var router = new VueRouter({
+        routes: [{
+                path: '/',
+                component: {
+                    template: '#no1',
+                    data() {
+                        return {
+                            value: '',
+                            songlist: '',
+                            arr: ''
+                        }
+                    },
+                    methods: {
+                        search() {
+                            this.$http.jsonp(
+                                'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?g_tk=5381&p=1&n=20&w=' +
+                                this.value +
+                                '&format=jsonp&jsonpCallback=callback&loginUin=0&hostUin=0&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&remoteplace=txt.yqq.song&t=0&aggr=1&cr=1&catZhida=1&flag_qc=0', {
+                                    jsonpCallback: 'callback'
+                                }).then((data) => {
+                                this.songlist = data.data.data.song.list;
+                                console.log(data)
+                            });
+                            0
+                        }
+                    },
+                    created() {
+                        this.$http.jsonp(
+                            'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1513317614040', {
+                                jsonpCallback: 'callback'
+                            }).then((data) => {
+                            this.arr = data.data.data.hotkey
+
+                        });
+                    },
+                    // watch: {
+                    //     '$route.params'(a, b) {
+                    //         location.href = '#/no5'
+                    //     }
+                    // }
+                }
+            },
+            {
+                path: '/no2',
+                component: {
+                    template: '#no2',
+                    data() {
+                        return {
+                            arr: '',
+                        }
+                    },
+                    created() {
+                        this.$http.jsonp(
+                            'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1512554796112', {
+                                jsonpCallback: 'callback'
+                            }).then((data) => {
+                            this.arr = data.data.data.topList
+                            // console.log(this.arr)
+                        });
+                    }
+                }
+            },
+            {
+                path: '/no3',
+                component: {
+                    template: '#no3',
+                    data() {
+                        return {
+                            arr: '',
+                        }
+                    },
+                    created() {
+                        this.$http.jsonp(
+                            'https://c.y.qq.com/v8/fcg-bin/v8.fcg?channel=singer&page=list&key=all_all_all&pagesize=100&pagenum=1&g_tk=5381&jsonpCallback=callback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0', {
+                                jsonpCallback: 'callback'
+                            }).then((data) => {
+                            // console.log(data)
+                            this.arr = data.data.data.list
+                        });
+                    }
+                }
+            },
+            {
+                path: '/no4',
+                component: {
+                    template: '#no4'
+                }
+            },
+            {
+                path: '/singers/:id',
+                component: {
+                    template: '#singers',
+                    data() {
+                        return {
+                            arr: ''
+                        }
+                    },
+                    created() {
+                        this.$http.jsonp(
+                            'https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?g_tk=5381&jsonpCallback=callback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&singermid='+this.$route.params.id+'&order=listen&begin=0&num=30&songstatus=1', {
+                                jsonpCallback: 'callback'
+                            }).then((data) => {
+                            this.arr = data.data.data.list
+                            console.log(data)
+                        });
+                    },
+                }
+            },
+            // 排行榜详情
+            {
+                path: '/top/:id',
+                component: {
+                    template: '#top',
+                    data() {
+                        return {
+                            list: ''
+                        }
+                    },
+                    created() {
+                        this.$http.jsonp(
+                            'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=' +
+                            this.$route.params.id + '&_=1512563984096', {
+                                jsonpCallback: 'callback'
+                            }).then((data) => {
+                            this.list = data.data.songlist
+                            console.log(this.list)
+                        });
+                    },
+                    // watch: {
+                    //     '$route.params.id'(a, b) {
+                    //         this.$http.jsonp(
+                    //             'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=' +
+                    //             this.$route.params.id + '&_=1512563984096', {
+                    //                 jsonpCallback: 'callback'
+                    //             }).then((data) => {
+                    //             // console.log(data)
+                    //             this.list = data.data.songlist
+                    //         });
+                    //     }
+                    // }
+                }
+            },
+            {
+                path: '/no5/:songmid/:songname',
+                component: {
+                    template: '#no5',
+                    data() {
+                        return {
+                            arr: []
+                        }
+                    },
+                    watch: {
+                        '$route.params'(a, b) {
+                            if (a.songmid) {
+                                if (a.songmid != 0 && a.songname != 0) {
+                                    var type = true;
+                                    for (var i = 0; i < this.arr.length; i++) {
+                                        if (a.songmid == this.arr[i].songmid) {
+                                            type = false
+                                        }
+                                    }
+                                    if (type) {
+                                        this.arr.push(a)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        ]
+    })
+
+
+    new Vue({
+        el: '#box',
+        router,
+        data: {
+            url: '',
+            arr: [{
+                    path: '#/',
+                    text: '首页'
+                },
+                {
+                    path: '#/no2',
+                    text: '排行榜'
+                },
+                {
+                    path: '#/no3',
+                    text: '歌手'
+                },
+                {
+                    path: '#/no4',
+                    text: '歌单'
+                },
+                {
+                    path: '#/no5',
+                    text: '播放列表'
+                }
+
+            ]
+        },
+        watch: {
+            "$route.params"(a, b) {
+                if (a.songmid) {
+                    if (a.songmid != 0 && a.songname != 0) {
+                        this.$http.jsonp(
+                            'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?g_tk=1278911659&hostUin=0&format=jsonp&callback=callback&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&cid=205361747&uin=0&songmid=' +
+                            a.songmid + '&filename=C400' + a.songmid + '.m4a&guid=3655047200', {
+                                jsonpCallback: 'callback'
+                            }).then((data) => {
+                            var filename = data.body.data.items[0].filename
+                            var key = data.body.data.items[0].vkey
+                            this.url =
+                                `http://dl.stream.qqmusic.qq.com/${filename}?vkey=${key}&guid=3655047200&fromtag=66`
+                        })
+                    }
+                }
+            }
+        }
+    })
+</script>
+
+</html>
